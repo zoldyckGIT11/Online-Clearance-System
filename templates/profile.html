@@ -1,0 +1,196 @@
+{% extends 'base.html' %}{% block title %}Profile | SPC Clearance{% endblock
+%}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Account</span>
+    <h1>Profile</h1>
+    <p class="subtitle">
+      Keep your contact details current for clearance updates.
+    </p>
+  </div>
+</div>
+<div class="panel" style="max-width: 680px">
+  {% if student %}
+  <form class="profile-photo-form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <label class="profile-photo-holder" for="profile_photo">
+      {% if student.profile_photo_path %}
+      <img
+        class="profile-photo"
+        src="{{ url_for('profile_photo') }}"
+        alt="Your profile photo"
+      />
+      {% else %}
+      <span class="profile-photo-placeholder" aria-hidden="true"
+        >{{ student.first_name[:1] }}{{ student.last_name[:1] }}</span
+      >
+      {% endif %}
+      <span class="profile-photo-edit" aria-hidden="true">Edit photo</span>
+    </label>
+    <div class="profile-photo-copy">
+      <span class="profile-photo-title">Profile photo</span>
+      <input
+        id="profile_photo"
+        name="profile_photo"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        class="profile-photo-input"
+        data-profile-photo-input
+      />
+      <label class="button secondary profile-photo-choose" for="profile_photo"
+        >Choose photo</label
+      >
+      <div class="profile-photo-actions">
+        <button
+          class="button secondary"
+          type="submit"
+          name="profile_action"
+          value="photo"
+          data-profile-photo-upload
+          hidden
+        >
+          Upload photo
+        </button>
+        {% if student.profile_photo_path %}
+        <button
+          class="button danger profile-photo-remove"
+          type="submit"
+          formaction="{{ url_for('profile') }}"
+          name="profile_action"
+          value="remove_photo"
+        >
+          Remove photo
+        </button>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+  <form class="profile-details-form" method="post" data-profile-edit-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input type="hidden" name="profile_action" value="details" />
+    <div class="profile-details-head">
+      <div>
+        <h2>Student information</h2>
+        <p class="muted">Update your personal and academic details.</p>
+      </div>
+      <button
+        class="button secondary profile-action-button"
+        type="button"
+        data-profile-edit
+        {%
+        if
+        profile_editing
+        %}hidden{%
+        endif
+        %}
+      >
+        Edit information
+      </button>
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="student_id">Student ID</label>
+        <input id="student_id" value="{{ student.student_id }}" readonly />
+      </div>
+      <div class="field">
+        <label for="student_email">School email</label>
+        <input id="student_email" value="{{ student.user.email }}" readonly />
+      </div>
+      <div class="field">
+        <label for="first_name">First name</label>
+        <input
+          id="first_name"
+          name="first_name"
+          value="{{ student.first_name }}"
+          maxlength="80"
+          data-profile-editable
+          readonly
+        />
+      </div>
+      <div class="field">
+        <label for="middle_name">Middle name</label>
+        <input
+          id="middle_name"
+          name="middle_name"
+          value="{{ student.middle_name }}"
+          maxlength="80"
+          data-profile-editable
+          readonly
+        />
+      </div>
+      <div class="field">
+        <label for="last_name">Last name</label>
+        <input
+          id="last_name"
+          name="last_name"
+          value="{{ student.last_name }}"
+          maxlength="80"
+          data-profile-editable
+          readonly
+        />
+      </div>
+      <div class="field">
+        <label for="contact_number">Contact number</label
+        ><input
+          id="contact_number"
+          name="contact_number"
+          value="{{ student.contact_number }}"
+          maxlength="30"
+          data-profile-editable
+          readonly
+        />
+      </div>
+      <div class="field">
+        <label for="program">Program</label>
+        <input
+          id="program"
+          name="program"
+          value="{{ student.program }}"
+          maxlength="120"
+          data-profile-editable
+          readonly
+        />
+      </div>
+      <div class="field">
+        <label for="year_level">Year level</label>
+        <input
+          id="year_level"
+          name="year_level"
+          value="{{ student.year_level }}"
+          maxlength="30"
+          data-profile-editable
+          readonly
+        />
+      </div>
+    </div>
+    <div
+      class="profile-edit-actions"
+      data-profile-edit-actions
+      {%
+      if
+      not
+      profile_editing
+      %}hidden{%
+      endif
+      %}
+    >
+      <button class="button profile-action-button" type="submit">
+        Save changes
+      </button>
+      <button
+        class="button secondary profile-action-button"
+        type="button"
+        data-profile-cancel
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+  {% else %}
+  <p><strong>{{ current_user.username }}</strong></p>
+  <p class="muted">
+    Role: {{ current_user.role }}<br />Email: {{ current_user.email }}
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

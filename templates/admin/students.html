@@ -1,0 +1,46 @@
+{% extends 'base.html' %}{% block title %}Students | SPC Clearance{% endblock
+%}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Administration</span>
+    <h1>Students</h1>
+  </div>
+</div>
+<form class="search-row">
+  <input
+    name="q"
+    value="{{ query }}"
+    placeholder="Search student ID or name"
+  /><button>Search</button>
+</form>
+<div class="panel table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Student ID</th>
+        <th>Name</th>
+        <th>Program</th>
+        <th>Year</th>
+        <th>Email</th>
+        <th>Account</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+      <tr>
+        <td>{{ student.student_id }}</td>
+        <td><strong>{{ student.full_name }}</strong></td>
+        <td>{{ student.program }}</td>
+        <td>{{ student.year_level }}</td>
+        <td>{{ student.user.email }}</td>
+        <td><span class="status approved">Active</span></td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="empty">No matching students.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

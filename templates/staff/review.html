@@ -1,0 +1,85 @@
+{% extends 'base.html' %}{% block title %}Review clearance | SPC Clearance{%
+endblock %}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">{{ item.office.name }}</span>
+    <h1>Review clearance</h1>
+    <p class="subtitle">Record a decision for this office only.</p>
+  </div>
+  <a class="button secondary" href="{{ url_for('staff_dashboard') }}"
+    >Back to assigned</a
+  >
+</div>
+<div class="metric-row">
+  <div class="panel">
+    <h3>Student information</h3>
+    <p>
+      <strong>{{ item.clearance.student.full_name }}</strong><br />{{
+      item.clearance.student.student_id }}<br />{{
+      item.clearance.student.program }} · {{ item.clearance.student.year_level
+      }} · {{ item.clearance.student.section }}
+    </p>
+    {% if item.document_path %}
+    <p>
+      <strong>Student proof:</strong>
+      <button
+        class="button secondary proof-view-button staff-proof-view-button"
+        type="button"
+        data-proof-url="{{ url_for('download_requirement', item_id=item.id) }}"
+        data-proof-type="{{ item.document_name.rsplit('.', 1)[-1] | lower }}"
+      >
+        View Proof</button
+      ><br /><span class="muted"
+        >Uploaded {{ item.uploaded_at.strftime('%b %d, %Y %H:%M') }}</span
+      >
+    </p>
+    {% else %}
+    <p class="muted">No requirement proof uploaded yet.</p>
+    {% endif %}
+  </div>
+  <div class="panel">
+    <h3>Clearance information</h3>
+    <p>
+      Academic year: <strong>{{ item.clearance.academic_year }}</strong
+      ><br />Overall progress: <strong>{{ item.clearance.progress }}%</strong
+      ><br />Current item:
+      <span class="status {{ item.status }}"
+        >{{ status_labels[item.status] }}</span
+      >
+    </p>
+  </div>
+</div>
+<div class="panel">
+  <h2>Office decision</h2>
+  <form method="post">
+    {{ form.hidden_tag() }}
+    <div class="field">{{ form.status.label }}{{ form.status() }}</div>
+    <div class="field">
+      {{ form.remarks.label }}{{ form.remarks(rows=5, placeholder='Add a clear
+      note for the student') }}
+    </div>
+    {{ form.submit(class='button') }}
+  </form>
+</div>
+{% if item.document_path %}
+<dialog
+  class="proof-dialog"
+  data-proof-dialog
+  aria-labelledby="proof-dialog-title"
+>
+  <div class="proof-viewer">
+    <div class="proof-viewer-header">
+      <h2 id="proof-dialog-title">Uploaded proof</h2>
+      <button
+        class="proof-viewer-close"
+        type="button"
+        data-proof-close
+        aria-label="Close proof viewer"
+      >
+        &times;
+      </button>
+    </div>
+    <div class="proof-content" data-proof-content></div>
+  </div>
+</dialog>
+{% endif %} {% endblock %}

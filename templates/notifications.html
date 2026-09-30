@@ -1,0 +1,39 @@
+{% extends 'base.html' %}{% block title %}Notifications | SPC Clearance{%
+endblock %}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Updates</span>
+    <h1>Notifications</h1>
+    <p class="subtitle">Important clearance activity and office feedback.</p>
+  </div>
+</div>
+<div class="panel">
+  {% for notification in notifications %}
+  <div
+    style="padding:15px 0;border-bottom:1px solid var(--line);opacity:{{ '1' if not notification.is_read else '.65' }}"
+  >
+    <div class="panel-head">
+      <strong>{{ notification.title }}</strong
+      ><small class="muted"
+        >{{ notification.created_at.strftime('%b %d, %Y %H:%M') }}</small
+      >
+    </div>
+    <p class="muted">{{ notification.message }}</p>
+    {% if not notification.is_read %}
+    <form
+      method="post"
+      action="{{ url_for('mark_notification_read', notification_id=notification.id) }}"
+    >
+      <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+      /><button class="button secondary">Mark as read</button>
+    </form>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="empty">You have no notifications.</div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'base.html' %}{% block title %}Student dashboard | SPC Clearance{%
+endblock %}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Student dashboard</span>
+    <h1>Good day, {{ current_user.student.first_name }}.</h1>
+    <p class="subtitle">
+      Here is the latest view of your clearance for {{
+      current_user.student.academic_year }}.
+    </p>
+  </div>
+  {% if clearance and clearance.status not in ['completed', 'cancelled'] %}
+  <form
+    method="post"
+    action="{{ url_for('cancel_all_clearances') }}"
+    data-confirm-form
+    data-confirm-title="Are you sure you want to cancel this request?"
+    data-confirm-detail="This will cancel all unfinished clearance and office requests. This cannot be undone."
+  >
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <button class="cancel-all-button" type="submit">Cancel all requests</button>
+  </form>
+  {% endif %}
+</div>
+{% if offices or approved_offices %}
+<div class="panel office-picker">
+  <div class="panel-head">
+    <div>
+      <h2>
+        {{ 'Add offices to your clearance' if clearance and clearance.status not
+        in ['completed', 'cancelled'] else 'Choose offices for approval' }}
+      </h2>
+      <p class="muted">
+        {{ 'You can add more offices while your clearance is in progress.' if
+        clearance and clearance.status not in ['completed', 'cancelled'] else
+        'Select only the offices you need for this clearance request.' }}
+      </p>
+    </div>
+  </div>
+  {% if offices %}
+  <form method="post" action="{{ url_for('start_clearance') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="office-options">
+      {% for office in offices %}
+      <label class="office-option"
+        ><input
+          type="checkbox"
+          name="office_ids"
+          value="{{ office.id }}"
+        /><span
+          ><strong>{{ office.name }}</strong
+          ><small>{{ office.description }}</small></span
+        ></label
+      >
+      {% endfor %}
+    </div>
+    <button>Submit selected offices</button>
+  </form>
+  {% else %}
+  <p class="muted">
+    All available offices are already requested or approved for this academic
+    year.
+  </p>
+  {% endif %} {% if approved_offices %}
+  <div class="approved-office-list">
+    <h3>Already approved this semester</h3>
+    <div class="office-options">
+      {% for office in approved_offices %}
+      <div class="office-option office-option-approved">
+        <span
+          ><strong>{{ office.name }}</strong
+          ><small>{{ office.description }}</small></span
+        >
+        <span class="status approved">Approved</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endif %} {% if clearance %}
+<div class="summary-grid">
+  <div class="stat-card">
+    <small>Overall status</small
+    ><span class="stat"
+      ><span class="status {{ clearance.status }}"
+        >{{ clearance.status_label }}</span
+      ></span
+    >
+  </div>
+  <div class="stat-card">
+    <small>Overall progress</small
+    ><span class="stat">{{ clearance.progress }}%</span>
+  </div>
+  <div class="stat-card">
+    <small>Approved offices</small
+    ><span class="stat"
+      >{{ clearance.items|selectattr('status','equalto','approved')|list|length
+      }}</span
+    >
+  </div>
+  <div class="stat-card">
+    <small>Needs attention</small
+    ><span class="stat"
+      >{{
+      clearance.items|selectattr('status','in',['requires_action','rejected'])|list|length
+      }}</span
+    >
+  </div>
+</div>
+<div class="panel">
+  <div class="panel-head">
+    <div>
+      <h2>Clearance progress</h2>
+      <span class="muted"
+        >{{ clearance.items|rejectattr('status', 'equalto',
+        'cancelled')|list|length }} active offices</span
+      >
+    </div>
+    <a class="button secondary" href="{{ url_for('student_clearance') }}"
+      >View details</a
+    >
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" style="width:{{ clearance.progress }}%"></div>
+  </div>
+  <div class="progress-row">
+    <span>Submitted {{ clearance.submitted_at.strftime('%b %d, %Y') }}</span
+    ><strong>{{ clearance.progress }}% complete</strong>
+  </div>
+</div>
+<div class="panel">
+  <div class="panel-head"><h2>Office status</h2></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Office</th>
+          <th>Status</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in clearance.items if item.status != 'cancelled' %}
+        <tr>
+          <td><strong>{{ item.office.name }}</strong></td>
+          <td>
+            <span class="status {{ item.status }}"
+              >{{ status_labels[item.status] }}</span
+            >
+          </td>
+          <td class="muted">{{ item.remarks or 'No remarks yet' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="panel empty">
+  <h2>Your clearance is ready to begin.</h2>
+  <p>
+    Submit once and each active school office will receive its own review item.
+  </p>
+</div>
+{% endif %}{% endblock %}

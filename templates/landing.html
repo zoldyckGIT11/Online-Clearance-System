@@ -1,0 +1,184 @@
+{% extends 'base.html' %}{% block title %}Online Clearance | Saint Paul
+College{% endblock %}{% block content %} {# Paste the direct image URLs between
+the quotes below. Leave either blank to keep the default styling. #} {% set
+saint_paul_logo_url = url_for('static', filename='images/saint-paul-logo.webp')
+%} {% set landing_background_url = url_for('static',
+filename='images/landing-bg.jpg') %}
+<div class="landing-page">
+  <div
+    class="hero"
+    {%
+    if
+    landing_background_url
+    %}
+    style="--landing-background: url('{{ landing_background_url }}')"
+    {%
+    endif
+    %}
+  >
+    <nav class="public-nav">
+      <div class="brand">
+        <img
+          class="brand-logo"
+          src="{{ saint_paul_logo_url }}"
+          alt="Saint Paul College logo"
+        />
+        <span>Saint Paul<br /><small>College Surigao</small></span>
+      </div>
+      <a class="button secondary" href="{{ url_for('login') }}">Sign in</a>
+    </nav>
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Student services, made clear</span>
+        <h1>Move through clearance with confidence.</h1>
+        <p>
+          One place for students and school offices to submit, review, and
+          complete academic clearance requests.
+        </p>
+        <a class="button" href="{{ url_for('login') }}">Student sign-in</a>
+        <a class="scroll-cue" href="#features"
+          >Explore the portal <span aria-hidden="true">↓</span></a
+        >
+      </div>
+      <div class="hero-panel">
+        <span class="eyebrow" style="color: #b8dbbd"
+          >A simpler campus workflow</span
+        ><strong class="academic-year">S.Y 2026 - 2027</strong>
+        <p style="color: #d9ebdc">
+          Connected offices, one clear progress view, and timely updates at
+          every step.
+        </p>
+        <hr style="border-color: rgba(255, 255, 255, 0.2)" />
+        <p style="color: #d9ebdc">Built for Saint Paul College - Surigao.</p>
+      </div>
+    </div>
+  </div>
+  <section class="landing-section features-section" id="features">
+    <div class="landing-section-inner">
+      <div class="section-intro">
+        <span class="eyebrow">Everything in one place</span>
+        <h2>Clearance that keeps everyone in sync.</h2>
+        <p>
+          Replace scattered messages and paper follow-ups with a shared view of
+          every office requirement, decision, and next step.
+        </p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="feature-number">01</span>
+          <h3>Choose your offices</h3>
+          <p>
+            Select only the active offices relevant to your clearance request.
+          </p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-number">02</span>
+          <h3>Upload proof securely</h3>
+          <p>
+            Send PDF, Word, JPG, or PNG documents directly to the assigned
+            office.
+          </p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-number">03</span>
+          <h3>Track every decision</h3>
+          <p>
+            See approvals, requests for action, notifications, and overall
+            progress.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section class="landing-section process-section" id="how-it-works">
+    <div class="landing-section-inner process-grid">
+      <div class="section-intro">
+        <span class="eyebrow">How it works</span>
+        <h2>Three steps from request to completion.</h2>
+        <p>
+          Your dashboard stays current as offices review your documents, so you
+          always know what needs attention.
+        </p>
+        <a class="button" href="{{ url_for('login') }}">Get started</a>
+      </div>
+      <ol class="steps-list">
+        <li>
+          <strong>Sign in with Google</strong
+          ><span
+            >Use your verified Saint Paul school account to access the
+            portal.</span
+          >
+        </li>
+        <li>
+          <strong>Submit your clearance</strong
+          ><span
+            >Choose offices, attach requirements, and send the request.</span
+          >
+        </li>
+        <li>
+          <strong>Respond and complete</strong
+          ><span
+            >Follow office feedback until every active office approves.</span
+          >
+        </li>
+      </ol>
+    </div>
+  </section>
+  <section class="school-background" id="school-background">
+    <div class="school-background-inner">
+      <span class="eyebrow">Our school</span>
+      <h2>St. Paul University Surigao</h2>
+      <p>
+        St. Paul University Surigao is a Catholic educational institution with a
+        rich history dating back to 1906. Guided by the values of faith,
+        excellence, service, and innovation, the university is committed to
+        developing competent, compassionate, and socially responsible
+        Paulinians.
+      </p>
+    </div>
+  </section>
+  <section class="landing-section faq-section" id="faqs">
+    <div class="landing-section-inner faq-layout">
+      <div class="section-intro">
+        <span class="eyebrow">Need to know</span>
+        <h2>Frequently asked questions.</h2>
+        <p>Quick answers for students starting their online clearance.</p>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>Which files can I upload?</summary>
+          <p>
+            You can upload PDF, Word, JPG, and PNG files for each office
+            requirement.
+          </p>
+        </details>
+        <details>
+          <summary>Can I change my selected offices?</summary>
+          <p>
+            You can cancel unfinished office requests and submit a new selection
+            while your clearance is still in progress.
+          </p>
+        </details>
+        <details>
+          <summary>How will I know when an office responds?</summary>
+          <p>
+            Your dashboard shows the latest status, and the portal sends in-app
+            notifications for important updates.
+          </p>
+        </details>
+        <details>
+          <summary>When is my clearance complete?</summary>
+          <p>
+            Your clearance is completed automatically once every active office
+            has approved its requirement.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+  <footer class="landing-credit">
+    <span class="landing-version">version 1.0.0</span>
+    <span>© All Rights Reserved. Ivan Descartin</span>
+  </footer>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}{% block title %}Assigned clearances | SPC Clearance{%
+endblock %}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Office staff</span>
+    <h1>Assigned clearances</h1>
+    <p class="subtitle">Review only the requests assigned to your office.</p>
+  </div>
+</div>
+<div class="summary-grid">
+  <div class="stat-card">
+    <small>Total assigned</small><span class="stat">{{ items|length }}</span>
+  </div>
+  <div class="stat-card">
+    <small>Pending</small
+    ><span class="stat"
+      >{{ items|selectattr('status','equalto','pending')|list|length }}</span
+    >
+  </div>
+  <div class="stat-card">
+    <small>Approved</small
+    ><span class="stat"
+      >{{ items|selectattr('status','equalto','approved')|list|length }}</span
+    >
+  </div>
+  <div class="stat-card">
+    <small>Needs action</small
+    ><span class="stat"
+      >{{
+      items|selectattr('status','in',['requires_action','rejected'])|list|length
+      }}</span
+    >
+  </div>
+</div>
+<div class="panel table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Program</th>
+        <th>Clearance</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>
+          <strong>{{ item.clearance.student.student_id }}</strong><br />{{
+          item.clearance.student.full_name }}
+        </td>
+        <td>{{ item.clearance.student.program }}</td>
+        <td>{{ item.clearance.academic_year }}</td>
+        <td>
+          <span class="status {{ item.status }}"
+            >{{ status_labels[item.status] }}</span
+          >
+        </td>
+        <td>
+          <a
+            class="button secondary"
+            href="{{ url_for('review_clearance', item_id=item.id) }}"
+            >Review</a
+          >
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="empty">No assigned clearance items.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

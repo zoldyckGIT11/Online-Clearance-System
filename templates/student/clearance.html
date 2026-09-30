@@ -1,0 +1,163 @@
+{% extends 'base.html' %}{% block title %}My clearance | SPC Clearance{%
+endblock %}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">My clearance</span>
+    <h1>Clearance details</h1>
+  </div>
+  {% if clearance and clearance.status == 'completed' %}<a
+    class="button"
+    href="{{ url_for('print_clearance') }}"
+    >Print clearance</a
+  >
+  {% endif %}
+</div>
+{% if clearance %}
+<div class="panel">
+  <div class="panel-head">
+    <div>
+      <h2>{{ clearance.academic_year }} clearance</h2>
+      <span class="status {{ clearance.status }}"
+        >{{ clearance.status_label }}</span
+      >
+    </div>
+    <strong>{{ clearance.progress }}%</strong>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" style="width:{{ clearance.progress }}%"></div>
+  </div>
+</div>
+<div class="panel table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Office</th>
+        <th>Status</th>
+        <th>Reviewed</th>
+        <th>Remarks</th>
+        <th>Requirement proof</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in clearance.items if item.status != 'cancelled' %}
+      <tr>
+        <td>{{ item.office.name }}</td>
+        <td>
+          <span class="status {{ item.status }}"
+            >{{ status_labels[item.status] }}</span
+          >
+        </td>
+        <td class="muted">
+          {{ item.reviewed_at.strftime('%b %d, %Y') if item.reviewed_at else
+          'Pending review' }}
+        </td>
+        <td>{{ item.remarks or '—' }}</td>
+        <td class="requirement-cell">
+          {% if item.document_path or item.clearance.status not in ['completed',
+          'cancelled'] %}
+          <div class="clearance-actions">
+            {% if item.document_path %}
+            <button
+              class="button secondary proof-view-button"
+              type="button"
+              data-proof-url="{{ url_for('download_requirement', item_id=item.id) }}"
+              data-proof-type="{{ item.document_name.rsplit('.', 1)[-1] | lower }}"
+            >
+              View Proof
+            </button>
+            {% endif %} {% if item.clearance.status not in ['completed',
+            'cancelled'] and item.status != 'cancelled' %}
+            <form
+              method="post"
+              action="{{ url_for('upload_requirement', item_id=item.id) }}"
+              enctype="multipart/form-data"
+              class="requirement-upload"
+              data-preview-form
+            >
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <input
+                type="file"
+                id="document-{{ item.id }}"
+                name="document"
+                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                required
+              />
+              <label class="upload-button" for="document-{{ item.id }}"
+                ><span>↥</span>{{ 'Replace proof' if item.document_path else
+                'Upload proof' }}</label
+              >
+              <button class="upload-submit" type="submit" disabled hidden>
+                Send file
+              </button>
+              <div class="file-preview" data-file-preview hidden>
+                <div class="preview-heading">
+                  <strong>Preview</strong
+                  ><button
+                    type="button"
+                    class="preview-clear"
+                    data-preview-clear
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div data-preview-content></div>
+              </div>
+            </form>
+            {% endif %} {% if item.clearance.status not in ['completed',
+            'cancelled'] and item.status not in ['approved', 'cancelled'] %}
+            <form
+              method="post"
+              action="{{ url_for('cancel_clearance_item', item_id=item.id) }}"
+              class="office-cancel-form"
+              data-confirm-form
+              data-confirm-title="Are you sure you want to cancel this request?"
+              data-confirm-detail="This will cancel your {{ item.office.name }} clearance request. This cannot be undone."
+            >
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <button class="cancel-office" type="submit">
+                Cancel request
+              </button>
+            </form>
+            {% endif %}
+          </div>
+          {% endif %} {% if item.status == 'cancelled' %}<span
+            class="status cancelled"
+            >Office request cancelled</span
+          >{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<dialog
+  class="proof-dialog"
+  data-proof-dialog
+  aria-labelledby="proof-dialog-title"
+>
+  <div class="proof-viewer">
+    <div class="proof-viewer-header">
+      <h2 id="proof-dialog-title">Uploaded proof</h2>
+      <button
+        class="proof-viewer-close"
+        type="button"
+        data-proof-close
+        aria-label="Close proof viewer"
+      >
+        &times;
+      </button>
+    </div>
+    <div class="proof-content" data-proof-content></div>
+  </div>
+</dialog>
+{% else %}
+<div class="panel empty">No clearance request yet.</div>
+{% endif %}{% endblock %}

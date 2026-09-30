@@ -1,0 +1,120 @@
+{% extends 'base.html' %} {% block title %}Admission | Saint Paul University
+Surigao{% endblock %} {% block content %}
+<div class="admission-page">
+  <header class="admission-header">
+    <a class="admission-brand" href="{{ url_for('login') }}">
+      <img
+        src="{{ url_for('static', filename='images/saint-paul-logo.webp') }}"
+        alt=""
+      />
+      <span
+        >St. Paul University Surigao<small>Student services portal</small></span
+      >
+    </a>
+  </header>
+
+  <main class="admission-main">
+    <section class="admission-intro">
+      <span class="admission-eyebrow">COLLEGE &amp; GRADUATE SCHOOL</span>
+      <h1>Start your next chapter.</h1>
+      <p>
+        Explore the application process and prepare the documents for your
+        applicant type.
+      </p>
+    </section>
+
+    <section class="admission-steps" aria-labelledby="admission-steps-heading">
+      <h2 id="admission-steps-heading">How to apply</h2>
+      <ol>
+        <li>
+          <span>01</span><strong>Fill out form</strong>
+          <p>
+            Complete the online application form with your personal and academic
+            details.
+          </p>
+        </li>
+        <li>
+          <span>02</span><strong>Verify email</strong>
+          <p>
+            Verify your email address via OTP and create your portal account.
+          </p>
+        </li>
+        <li>
+          <span>03</span><strong>Submit</strong>
+          <p>Review your application and submit the required documents.</p>
+        </li>
+        <li>
+          <span>04</span><strong>Await review</strong>
+          <p>
+            Track your application status online while it is being processed.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <section
+      class="admission-requirements"
+      aria-labelledby="requirements-heading"
+    >
+      <div class="admission-section-heading">
+        <div>
+          <span class="admission-eyebrow">BE PREPARED</span>
+          <h2 id="requirements-heading">Admission requirements</h2>
+          <span class="requirements-caption">Select your applicant type</span>
+        </div>
+      </div>
+      <nav
+        class="requirement-tabs"
+        id="applicant-type-tabs"
+        data-applicant-tabs
+        role="tablist"
+        aria-label="Applicant type"
+      >
+        {% for tab in requirement_tabs %}
+        <button
+          class="requirement-tab{% if tab.is_active %} selected{% endif %}"
+          type="button"
+          id="applicant-tab-{{ tab.key }}"
+          role="tab"
+          aria-controls="applicant-panel-{{ tab.key }}"
+          aria-selected="{{ 'true' if tab.is_active else 'false' }}"
+          tabindex="{{ 0 if tab.is_active else -1 }}"
+          data-applicant-tab
+        >
+          {{ tab.label }}
+        </button>
+        {% endfor %}
+      </nav>
+      {% for tab in requirement_tabs %}
+      <section
+        class="requirements-panel{% if not tab.is_active %} is-hidden{% endif %}"
+        id="applicant-panel-{{ tab.key }}"
+        role="tabpanel"
+        aria-labelledby="applicant-tab-{{ tab.key }}"
+        data-applicant-panel
+      >
+        <ul class="requirements-list">
+          {% for item in requirement_sets[tab.key]["items"] %}
+          <li><span aria-hidden="true">✓</span>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endfor %}
+      <p class="admission-reminder">
+        <strong>Important reminder</strong>
+        Please photocopy all your documents for your future use before
+        submitting them to the Registrar's Office. Pulling out or borrowing of
+        records is <strong>NOT ALLOWED</strong>. Please be guided accordingly.
+      </p>
+    </section>
+  </main>
+  <footer class="admission-footer">
+    <div class="admission-footer-inner">
+      <a href="{{ url_for('login') }}">← Back to sign in</a>
+      <span class="admission-copyright"
+        >© 2026 St. Paul University Surigao</span
+      >
+    </div>
+  </footer>
+</div>
+{% endblock %}

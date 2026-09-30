@@ -1,0 +1,50 @@
+{% extends 'base.html' %}{% block title %}Printable clearance | SPC Clearance{%
+endblock %}{% block content %}
+<div class="print-actions"><button data-print>Print / Save PDF</button></div>
+<article class="print-page">
+  <div class="print-header">
+    <h1>SAINT PAUL COLLEGE - SURIGAO</h1>
+    <p>STUDENT CLEARANCE</p>
+  </div>
+  <div class="print-meta">
+    <div>
+      <strong>Student ID</strong><br />{{ clearance.student.student_id }}
+    </div>
+    <div><strong>Academic Year</strong><br />{{ clearance.academic_year }}</div>
+    <div>
+      <strong>Student name</strong><br />{{ clearance.student.full_name }}
+    </div>
+    <div>
+      <strong>Program / Year</strong><br />{{ clearance.student.program }} / {{
+      clearance.student.year_level }}
+    </div>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Office</th>
+        <th>Status</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in clearance.items %}
+      <tr>
+        <td>{{ item.office.name }}</td>
+        <td>APPROVED</td>
+        <td>{{ item.remarks or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p style="margin-top: 35px">
+    <strong>Date completed:</strong> {{ clearance.completed_at.strftime('%B %d,
+    %Y') }}<br /><strong>Reference:</strong> SPC-{{ clearance.id }}-{{
+    clearance.student.student_id }}
+  </p>
+  <p class="muted" style="margin-top: 45px">
+    This digitally generated record is verifiable through the Saint Paul College
+    - Surigao clearance portal.
+  </p>
+</article>
+{% endblock %}

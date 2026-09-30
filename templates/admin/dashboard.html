@@ -1,0 +1,48 @@
+{% extends 'base.html' %}{% block title %}Admin dashboard | SPC Clearance{%
+endblock %}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Administration</span>
+    <h1>System overview</h1>
+    <p class="subtitle">
+      A live view of clearance activity across the college.
+    </p>
+  </div>
+</div>
+<div class="summary-grid">
+  <div class="stat-card">
+    <small>Total students</small><span class="stat">{{ stats.students }}</span>
+  </div>
+  <div class="stat-card">
+    <small>Total clearances</small
+    ><span class="stat">{{ stats.clearances }}</span>
+  </div>
+  <div class="stat-card">
+    <small>Open requests</small><span class="stat">{{ stats.pending }}</span>
+  </div>
+  <div class="stat-card">
+    <small>Completed</small><span class="stat">{{ stats.completed }}</span>
+  </div>
+</div>
+<div class="metric-row">
+  <div class="panel">
+    <div class="panel-head"><h2>Quick actions</h2></div>
+    <p>
+      <a class="button" href="{{ url_for('admin_offices') }}">Manage offices</a>
+      <a class="button secondary" href="{{ url_for('export_clearances') }}"
+        >Export CSV</a
+      >
+    </p>
+  </div>
+  <div class="panel">
+    <h2>Recent activity</h2>
+    {% for log in recent_logs %}
+    <p class="muted">
+      <strong>{{ log.action }}</strong><br />{{ log.description }}
+    </p>
+    {% else %}
+    <p class="muted">No activity yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

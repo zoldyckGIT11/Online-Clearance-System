@@ -1,0 +1,39 @@
+{% extends 'base.html' %}{% block title %}Register | SPC Clearance{% endblock
+%}{% block content %}
+<div class="auth-layout">
+  <div class="auth-card" style="width: min(700px, 100%)">
+    <div class="brand">
+      <img
+        class="brand-logo"
+        src="{{ url_for('static', filename='images/saint-paul-logo.webp') }}"
+        alt="Saint Paul College logo"
+      /><span>Saint Paul<br /><small>College Surigao</small></span>
+    </div>
+    <h1>Complete your student profile.</h1>
+    <p class="subtext">
+      Signed in as <strong>{{ school_email }}</strong>. Your school offices will
+      review your clearance.
+    </p>
+    <form method="post">
+      {{ form.hidden_tag() }}
+      <div class="form-grid">
+        {% for field in
+        [form.student_id,form.first_name,form.middle_name,form.last_name,form.contact_number,form.program,form.year_level,form.section,form.academic_year]
+        %}
+        <div class="field {% if field.name == 'program' %}full{% endif %}">
+          {{ field.label }}{{ field(class='form-control') }}{% for error in
+          field.errors %}
+          <div class="form-errors">{{ error }}</div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      {{ form.submit(class='button') }}
+    </form>
+    <p class="auth-foot">
+      Wrong account?
+      <a href="{{ url_for('cancel_registration') }}">Start over</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

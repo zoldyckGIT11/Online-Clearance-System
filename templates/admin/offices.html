@@ -1,0 +1,80 @@
+{% extends 'base.html' %}{% block title %}Offices | SPC Clearance{% endblock
+%}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Administration</span>
+    <h1>Clearance offices and teachers</h1>
+    <p class="subtitle">
+      Active offices and individual teacher destinations are included in new
+      clearance requests.
+    </p>
+  </div>
+</div>
+<div class="metric-row">
+  <div class="panel">
+    <h2>Add office or teacher</h2>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <div class="field">
+        <label for="name">Office name</label
+        ><input id="name" name="name" required />
+      </div>
+      <div class="field">
+        <label for="description">Description</label
+        ><input id="description" name="description" />
+      </div>
+      <div class="field">
+        <label for="staff_username">Assigned staff username (optional)</label>
+        <input id="staff_username" name="staff_username" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="staff_password"
+          >Initial password for a new staff account</label
+        >
+        <input
+          id="staff_password"
+          name="staff_password"
+          type="password"
+          minlength="8"
+          autocomplete="new-password"
+        />
+      </div>
+      <p class="muted">
+        Create one destination per teacher and assign that teacher's username to
+        keep requests private to their queue. Leave staff fields blank for a
+        regular office.
+      </p>
+      <button>Add office or teacher</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h2>Configured offices</h2>
+    <div class="office-list">
+      {% for office in offices %}
+      <article class="office-row">
+        <div class="office-row-info">
+          <strong>{{ office.name }}</strong>
+          <span class="muted"
+            >{{ office.description or 'No description' }}</span
+          >
+        </div>
+        <span class="status {{ 'approved' if office.is_active else 'pending' }}"
+          >{{ 'Active' if office.is_active else 'Removed' }}</span
+        >
+        <form
+          method="post"
+          action="{{ url_for('admin_toggle_office', office_id=office.id) }}"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button class="button secondary office-toggle" type="submit">
+            {{ 'Remove office' if office.is_active else 'Restore office' }}
+          </button>
+        </form>
+      </article>
+      {% else %}
+      <p class="muted">No offices configured.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}{% block title %}Reports | SPC Clearance{% endblock
+%}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Administration</span>
+    <h1>Office reports</h1>
+    <p class="subtitle">Approval activity by clearance office.</p>
+  </div>
+</div>
+<div class="panel table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Office</th>
+        <th>Total items</th>
+        <th>Approved</th>
+        <th>Pending</th>
+        <th>Approval rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in office_stats %}
+      <tr>
+        <td><strong>{{ row.office.name }}</strong></td>
+        <td>{{ row.total }}</td>
+        <td>{{ row.approved }}</td>
+        <td>{{ row.pending }}</td>
+        <td>
+          {{ ((row.approved / row.total) * 100)|round|int if row.total else 0
+          }}%
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

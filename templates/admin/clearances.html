@@ -1,0 +1,64 @@
+{% extends 'base.html' %}{% block title %}Clearances | SPC Clearance{% endblock
+%}{% block content %}
+<div class="section-head">
+  <div>
+    <span class="eyebrow">Administration</span>
+    <h1>Clearance requests</h1>
+  </div>
+  <a class="button secondary" href="{{ url_for('export_clearances') }}"
+    >Export CSV</a
+  >
+</div>
+<form class="search-row" id="clearance-status-filter">
+  <div class="clearance-filter-control">
+    <svg class="clearance-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 5h16l-6.5 7.5v5l-3 1.5v-6.5L4 5Z" />
+    </svg>
+    <span class="clearance-filter-value">{{ status_labels.get(selected_status, 'All Status') if selected_status else 'All Status' }}</span>
+    <select name="status" aria-label="Filter clearances by status" onchange="this.form.requestSubmit()">
+      <option value="">All Status</option>
+      {% for value,label in status_labels.items() %}
+      <option value="{{ value }}"{{ ' selected' if selected_status == value else '' }}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <svg class="clearance-filter-chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>
+</form>
+<div class="panel table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Academic year</th>
+        <th>Progress</th>
+        <th>Status</th>
+        <th>Submitted</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for clearance in clearances %}
+      <tr>
+        <td>
+          <strong>{{ clearance.student.student_id }}</strong><br />{{
+          clearance.student.full_name }}
+        </td>
+        <td>{{ clearance.academic_year }}</td>
+        <td>{{ clearance.progress }}%</td>
+        <td>
+          <span class="status {{ clearance.status }}"
+            >{{ clearance.status_label }}</span
+          >
+        </td>
+        <td>{{ clearance.submitted_at.strftime('%b %d, %Y') }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="empty">No clearances found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
