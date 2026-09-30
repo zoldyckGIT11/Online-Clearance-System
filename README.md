@@ -13,6 +13,10 @@ python -m venv .venv
 
 Open http://127.0.0.1:5000.
 
+## Vercel deployment note
+
+On Vercel, the app stores its SQLite database, uploads, and profile photos under `/tmp/spc-online-clearance` because the deployed source directory is read-only. Set `INSTANCE_DIR`, `UPLOAD_DIR`, or `PROFILE_PHOTO_DIR` to override these paths. Vercel temporary storage is not durable and may be cleared between function instances or deployments; use persistent database and file-storage services before relying on this deployment for real student records.
+
 ## Google student sign-in
 
 Student authentication uses Google OpenID Connect and accepts only verified `@students.spus.edu.ph` accounts. Create a Web application OAuth client in Google Cloud Console and add `http://127.0.0.1:5000/auth/google/callback` as an authorized redirect URI. Copy `.env.example` to `.env`, then fill in the client ID and client secret from Google Cloud Console:

@@ -6,6 +6,7 @@ import io
 import os
 import re
 import secrets
+import tempfile
 from types import SimpleNamespace
 
 from dotenv import dotenv_values
@@ -31,10 +32,21 @@ def configured_value(name, default=None):
     return os.environ.get(name) or LOCAL_CONFIG.get(name) or default
 
 
+DEFAULT_INSTANCE_DIR = (
+    Path(tempfile.gettempdir()) / "spc-online-clearance"
+    if os.environ.get("VERCEL") == "1"
+    else BASE_DIR / "instance"
+)
+INSTANCE_DIR = Path(configured_value("INSTANCE_DIR", str(DEFAULT_INSTANCE_DIR)))
+UPLOAD_DIR = Path(configured_value("UPLOAD_DIR", str(INSTANCE_DIR / "uploads")))
+PROFILE_PHOTO_DIR = Path(
+    configured_value("PROFILE_PHOTO_DIR", str(INSTANCE_DIR / "profile_photos"))
+)
+
 app = Flask(__name__)
 app.config.update(
     SECRET_KEY=configured_value("SECRET_KEY", "dev-only-change-this-secret"),
-    SQLALCHEMY_DATABASE_URI=f"sqlite:///{BASE_DIR / 'instance' / 'clearance.db'}",
+    SQLALCHEMY_DATABASE_URI=f"sqlite:///{INSTANCE_DIR / 'clearance.db'}",
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
@@ -49,10 +61,8 @@ ALLOWED_GOOGLE_DOMAINS = frozenset(
     for domain in app.config["GOOGLE_ALLOWED_DOMAINS"].split(",")
     if domain.strip()
 )
-Path(app.instance_path).mkdir(parents=True, exist_ok=True)
-UPLOAD_DIR = BASE_DIR / "instance" / "uploads"
+INSTANCE_DIR.mkdir(parents=True, exist_ok=True)
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-PROFILE_PHOTO_DIR = Path(app.instance_path) / "profile_photos"
 PROFILE_PHOTO_DIR.mkdir(parents=True, exist_ok=True)
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
